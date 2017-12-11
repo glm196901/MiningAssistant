@@ -559,8 +559,7 @@ namespace requestJson
         }
 
         private void button3_Click(object sender, EventArgs e)
-        {
-            this.bminer.Text = "";
+        {            
             this.bminer.Text = "感谢您使用我们的产品";
         }
 
