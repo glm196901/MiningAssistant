@@ -16,3 +16,10 @@ C:\output_demo\requestJson\requestJson\obj\Debug\requestJson.csprojResolveAssemb
 C:\output_demo\requestJson\MiningAssistant\requestJson\bin\Debug\requestJson.exe.config
 C:\output_demo\requestJson\MiningAssistant\requestJson\obj\Debug\requestJson.exe
 C:\output_demo\requestJson\MiningAssistant\requestJson\obj\Debug\requestJson.pdb
+C:\output_demo\requestJson\MiningAssistant\requestJson\bin\Debug\requestJson.exe
+C:\output_demo\requestJson\MiningAssistant\requestJson\bin\Debug\requestJson.pdb
+C:\output_demo\requestJson\MiningAssistant\requestJson\bin\Debug\Newtonsoft.Json.dll
+C:\output_demo\requestJson\MiningAssistant\requestJson\bin\Debug\Newtonsoft.Json.xml
+C:\output_demo\requestJson\MiningAssistant\requestJson\obj\Debug\requestJson.Form1.resources
+C:\output_demo\requestJson\MiningAssistant\requestJson\obj\Debug\requestJson.Properties.Resources.resources
+C:\output_demo\requestJson\MiningAssistant\requestJson\obj\Debug\requestJson.csproj.GenerateResource.Cache
