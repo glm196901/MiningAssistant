@@ -38,6 +38,8 @@ namespace requestJson
 
         private void InitInfo()
         {
+            Console.WriteLine(this.mainEnterance.Text.GetType())
+            ;
             //curProcess.OutputDataReceived -= new DataReceivedEventHandler(ProcessOutDataReceived);
             ProcessStartInfo p = new ProcessStartInfo();
             p.FileName = "cmd.exe";
