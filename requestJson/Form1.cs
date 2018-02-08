@@ -27,8 +27,22 @@ namespace requestJson
         {
             InitializeComponent();
             InitInfo();
-            autoreader(@"C:\temp\bminer-v2.0.0-24861a7\saveUserInput.ini");
+            string path = System.IO.Directory.GetCurrentDirectory();
+            Console.WriteLine(path);
+            Console.WriteLine(path.GetType());
+            string bminer1 = @"bminer -api 127.0.0.1:1880 -uri stratum://";
+            DirectoryInfo folder = new DirectoryInfo(path);
+            string bminerPath = Path.Combine(path, bminer1);
+            Console.WriteLine(bminerPath);
+            this.mainEnterance.Text += bminerPath;
+
+            string autoRead = @"saveUserInput.ini";
+            string autoReadPath = Path.Combine(path, autoRead);
+
+            autoreader(autoReadPath);
             Administrator();
+
+
         }
 
         //page1
@@ -38,8 +52,8 @@ namespace requestJson
 
         private void InitInfo()
         {
-            Console.WriteLine(this.mainEnterance.Text.GetType())
-            ;
+
+
             //curProcess.OutputDataReceived -= new DataReceivedEventHandler(ProcessOutDataReceived);
             ProcessStartInfo p = new ProcessStartInfo();
             p.FileName = "cmd.exe";
@@ -60,7 +74,7 @@ namespace requestJson
 
         }
 
-        
+
         //判断温度是否填写
         private void judgementTem()
         {
@@ -170,7 +184,7 @@ namespace requestJson
             WindowsIdentity wid = WindowsIdentity.GetCurrent();
             WindowsPrincipal principal = new WindowsPrincipal(wid);
             string path1 = Application.ExecutablePath;
-             RegistryKey rk = Registry.LocalMachine;
+            RegistryKey rk = Registry.LocalMachine;
             if (principal.IsInRole(WindowsBuiltInRole.Administrator))
             {
                 if ((this.radioButton1.Checked == true) && (this.autoStart.Checked == true))
@@ -188,7 +202,7 @@ namespace requestJson
                     sw.Write(autoSave[2]);
                     sw.Write(autoSave[3] = this.plAdd1.Text);
                     sw.Write(autoSave[4] = "," + this.plPort1.Text);
-                    sw.Write(autoSave[5]= "," + this.autoStart.Checked);
+                    sw.Write(autoSave[5] = "," + this.autoStart.Checked);
                     //motify
                     MessageBox.Show("设置开机自启动设置成功，需要修改注册表，重启后执行", "提示");
                     RegistryKey rk2 = rk.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
@@ -263,7 +277,8 @@ namespace requestJson
                     rk.Close();
                 }
             }
-            else {
+            else
+            {
                 if ((this.radioButton1.Checked == true) && (this.autoStart.Checked == true))
                 {
                     this.plAdd.Text = "";
@@ -405,7 +420,7 @@ namespace requestJson
                     //this.btnStart.PerformClick();
 
                 }
-                else if ((indexStr > -1)&& (lastIndexF > -1))
+                else if ((indexStr > -1) && (lastIndexF > -1))
                 {
 
                     string[] sArray = line.Split('|');
@@ -458,7 +473,8 @@ namespace requestJson
 
 
         //关闭bminer
-        private void stopApp() {
+        private void stopApp()
+        {
             Process[] myProgress;
             myProgress = Process.GetProcesses();          //获取当前启动的所有进程
 
@@ -481,7 +497,8 @@ namespace requestJson
         }
 
 
-        private void Administrator() {
+        private void Administrator()
+        {
 
             WindowsIdentity wid = WindowsIdentity.GetCurrent();
             WindowsPrincipal principal = new WindowsPrincipal(wid);
@@ -506,7 +523,10 @@ namespace requestJson
             {
                 //用户选择确认的操作
                 stopApp();
-                this.autoWriter(@"C:\temp\bminer-v2.0.0-24861a7\saveUserInput.ini");
+                string path1 = System.IO.Directory.GetCurrentDirectory();
+                string autoWrite = @"saveUserInput.ini";
+                string autoWritePath = Path.Combine(path1, autoWrite);
+                this.autoWriter(autoWritePath);
                 //Environment.Exit(1);
                 Dispose();
                 Application.Exit();
@@ -531,7 +551,7 @@ namespace requestJson
 
             if (string.IsNullOrEmpty(wltAdd.Text) || string.IsNullOrEmpty(minName.Text))
             {
-                MessageBox.Show("请检查 是否有未填写的内容");
+                MessageBox.Show("请检查 是否有未填写的内容`");
                 return;
             }
 
@@ -561,7 +581,8 @@ namespace requestJson
         }
 
         private void button3_Click(object sender, EventArgs e)
-        {            
+        {
+            this.bminer.Text = "";
             this.bminer.Text = "感谢您使用我们的产品";
         }
 
@@ -623,7 +644,7 @@ namespace requestJson
 
         private void bminer_TextChanged(object sender, EventArgs e)
         {
-            
+
             if (this.bminer.Text == "")
             {
                 DialogResult dr = MessageBox.Show("请输入正确参数后再启动", "启动失败", MessageBoxButtons.OK, MessageBoxIcon.Question);
@@ -676,16 +697,16 @@ namespace requestJson
 
         public void getApi()
         {
-                try
+            try
+            {
+                string ss = HttpGet("http://127.0.0.1:1880/api/status");
+                JObject Jobjs = JObject.Parse(ss);
+                // Console.WriteLine(o);
+                //Console.WriteLine(ss.ToString());         
+                foreach (JProperty Jobj in Jobjs.Properties())
                 {
-                    string ss = HttpGet("http://127.0.0.1:1880/api/status");
-                    JObject Jobjs = JObject.Parse(ss);
-                    // Console.WriteLine(o);
-                    //Console.WriteLine(ss.ToString());         
-                    foreach (JProperty Jobj in Jobjs.Properties())
+                    if (Jobj.Name == "stratum")
                     {
-                        if (Jobj.Name == "stratum")
-                        {
                         this.textBox1.Text = Jobj.Value["accepted_shares"].ToString() + "\t";
                         this.textBox2.Text = Jobj.Value["rejected_shares"].ToString() + "\t";
                         this.textBox3.Text = Jobj.Value["accepted_share_rate"].ToString() + "\t";
@@ -694,132 +715,132 @@ namespace requestJson
                         lvi1.SubItems.Add(Jobj.Value["accepted_shares"].ToString());
                     }
 
-                        if (Jobj.Name == "miners")
+                    if (Jobj.Name == "miners")
+                    {
+                        //List<string> listArr = new List<string>();
+                        List<List<string>> array = new List<List<string>>();
+                        List<string> item1 = new List<string>();
+                        List<string> item2 = new List<string>();
+                        List<string> item3 = new List<string>();
+                        List<string> item4 = new List<string>();
+                        List<string> item5 = new List<string>();
+                        //List<string> item6 = new List<string>();
+                        //List<string> item7 = new List<string>();
+                        //List<string> item8 = new List<string>();
+                        //List<string> item9 = new List<string>();
+                        //List<string> item10 = new List<string>();
+                        List<string> item11 = new List<string>();
+                        List<string> item12 = new List<string>();
+
+                        foreach (JProperty num in Jobj.Value)
                         {
-                            //List<string> listArr = new List<string>();
-                            List<List<string>> array = new List<List<string>>();
-                            List<string> item1 = new List<string>();
-                            List<string> item2 = new List<string>();
-                            List<string> item3 = new List<string>();
-                            List<string> item4 = new List<string>();
-                            List<string> item5 = new List<string>();
-                            //List<string> item6 = new List<string>();
-                            //List<string> item7 = new List<string>();
-                            //List<string> item8 = new List<string>();
-                            //List<string> item9 = new List<string>();
-                            //List<string> item10 = new List<string>();
-                            List<string> item11 = new List<string>();
-                            List<string> item12 = new List<string>();
-
-                            foreach (JProperty num in Jobj.Value)
+                            foreach (JProperty oJobj in num.Value)
                             {
-                                foreach (JProperty oJobj in num.Value)
+
+                                // Console.WriteLine(listArr);
+
+                                //Console.WriteLine(oJobj);
+                                if (oJobj.Name == "solver")
                                 {
+                                    //Console.WriteLine(oJobj.Name + oJobj.Value);
 
-                                    // Console.WriteLine(listArr);
+                                    string sltRate = oJobj.Value["solution_rate"].ToString();
+                                    string noRate = oJobj.Value["nonce_rate"].ToString();
+                                    item11.Add(sltRate);
+                                    item12.Add(noRate);
+                                    array.Add(item11);
+                                    array.Add(item12);
 
-                                    //Console.WriteLine(oJobj);
-                                    if (oJobj.Name == "solver")
-                                    {
-                                        //Console.WriteLine(oJobj.Name + oJobj.Value);
+                                }
+                                else
+                                {
+                                    //Console.WriteLine(oJobj.Name);
 
-                                        string sltRate = oJobj.Value["solution_rate"].ToString();
-                                        string noRate = oJobj.Value["nonce_rate"].ToString();
-                                        item11.Add(sltRate);
-                                        item12.Add(noRate);
-                                        array.Add(item11);
-                                        array.Add(item12);
+                                    string devtemp = oJobj.Value["temperature"].ToString();
+                                    string devpow = oJobj.Value["power"].ToString();
+                                    string glbMemUsed = oJobj.Value["global_memory_used"].ToString();
+                                    string utiGpu = oJobj.Value["utilization"]["gpu"].ToString();
+                                    string utiMem = oJobj.Value["utilization"]["memory"].ToString();
+                                    //string clksCore = oJobj.Value["clocks"]["core"].ToString();
+                                    //string clksMem = oJobj.Value["clocks"]["memory"].ToString();
+                                    //string pciBar = oJobj.Value["pci"]["bar1_used"].ToString();
+                                    //string pciRx = oJobj.Value["pci"]["rx_throughput"].ToString();
+                                    //string pciTx = oJobj.Value["pci"]["tx_throughput"].ToString();
 
-                                    }
-                                    else
-                                    {
-                                        //Console.WriteLine(oJobj.Name);
+                                    //inside
+                                    item1.Add(devtemp);
+                                    item2.Add(devpow);
+                                    item3.Add(glbMemUsed);
+                                    item4.Add(utiGpu);
+                                    item5.Add(utiMem);
+                                    //item6.Add(clksCore);
+                                    //item7.Add(clksMem);
+                                    //item8.Add(pciBar);
+                                    //item9.Add(pciRx);
+                                    //item10.Add(pciTx);
+                                    //outside
+                                    array.Add(item1);
+                                    array.Add(item2);
+                                    array.Add(item3);
+                                    array.Add(item4);
+                                    array.Add(item5);
+                                    //array.Add(item6);
+                                    //array.Add(item7);
+                                    //array.Add(item8);
+                                    //array.Add(item9);
+                                    //array.Add(item10);
 
-                                        string devtemp = oJobj.Value["temperature"].ToString();
-                                        string devpow = oJobj.Value["power"].ToString();
-                                        string glbMemUsed = oJobj.Value["global_memory_used"].ToString();
-                                        string utiGpu = oJobj.Value["utilization"]["gpu"].ToString();
-                                        string utiMem = oJobj.Value["utilization"]["memory"].ToString();
-                                        //string clksCore = oJobj.Value["clocks"]["core"].ToString();
-                                        //string clksMem = oJobj.Value["clocks"]["memory"].ToString();
-                                        //string pciBar = oJobj.Value["pci"]["bar1_used"].ToString();
-                                        //string pciRx = oJobj.Value["pci"]["rx_throughput"].ToString();
-                                        //string pciTx = oJobj.Value["pci"]["tx_throughput"].ToString();
-
-                                        //inside
-                                        item1.Add(devtemp);
-                                        item2.Add(devpow);
-                                        item3.Add(glbMemUsed);
-                                        item4.Add(utiGpu);
-                                        item5.Add(utiMem);
-                                        //item6.Add(clksCore);
-                                        //item7.Add(clksMem);
-                                        //item8.Add(pciBar);
-                                        //item9.Add(pciRx);
-                                        //item10.Add(pciTx);
-                                        //outside
-                                        array.Add(item1);
-                                        array.Add(item2);
-                                        array.Add(item3);
-                                        array.Add(item4);
-                                        array.Add(item5);
-                                        //array.Add(item6);
-                                        //array.Add(item7);
-                                        //array.Add(item8);
-                                        //array.Add(item9);
-                                        //array.Add(item10);
-
-                                    }
                                 }
                             }
-
-                            this.listView1.Items.Clear();
-                            for (int i = 0; i < 6; i++)
-                            {
-                                ListViewItem lvi = new ListViewItem();
-
-                                lvi.Text = i + " 号矿机";
-                                lvi.SubItems.Add(array[0][i]);
-                                lvi.SubItems.Add(array[1][i]);
-                                lvi.SubItems.Add(array[2][i]);
-                                lvi.SubItems.Add(array[3][i]);
-                                lvi.SubItems.Add(array[4][i]);
-                                lvi.SubItems.Add(array[5][i]);
-                                //lvi.SubItems.Add(array[6][i]);
-                                //lvi.SubItems.Add(array[7][i]);
-                                //lvi.SubItems.Add(array[8][i]);
-                                //lvi.SubItems.Add(array[9][i]);
-                                lvi.SubItems.Add(array[12][i]);
-                                lvi.SubItems.Add(array[11][i]);
-                                //int sumSol;
-                                //int.TryParse(array[10][i], out );
-                                this.listView1.Items.Add(lvi);
-
-                            }
-                            //this.textBox5.Text = 
-
-                            Console.WriteLine(array[0][0]);
-                            //Console.WriteLine((array[10][0]).GetType());
-                            float sol0, sol1, sol2, sol3, sol4, sol5;
-                            float.TryParse(array[0][0], out sol0);
-                            float.TryParse(array[0][1], out sol1);
-                            float.TryParse(array[0][2], out sol2);
-                            float.TryParse(array[0][3], out sol3);
-                            float.TryParse(array[0][4], out sol4);
-                            float.TryParse(array[0][5], out sol5);
-                            float sum = sol0 + sol1 + sol2 + sol3 + sol4 + sol5;
-
-                            this.allSol.Text = sum.ToString();
-                            Console.WriteLine(sol0 + sol1 + sol2 + sol3 + sol4 + sol5);
-                            Console.WriteLine(sol1.GetType());
                         }
+
+                        this.listView1.Items.Clear();
+                        for (int i = 0; i < 6; i++)
+                        {
+                            ListViewItem lvi = new ListViewItem();
+
+                            lvi.Text = i + " 号矿机";
+                            lvi.SubItems.Add(array[0][i]);
+                            lvi.SubItems.Add(array[1][i]);
+                            lvi.SubItems.Add(array[2][i]);
+                            lvi.SubItems.Add(array[3][i]);
+                            lvi.SubItems.Add(array[4][i]);
+                            lvi.SubItems.Add(array[5][i]);
+                            //lvi.SubItems.Add(array[6][i]);
+                            //lvi.SubItems.Add(array[7][i]);
+                            //lvi.SubItems.Add(array[8][i]);
+                            //lvi.SubItems.Add(array[9][i]);
+                            lvi.SubItems.Add(array[12][i]);
+                            lvi.SubItems.Add(array[11][i]);
+                            //int sumSol;
+                            //int.TryParse(array[10][i], out );
+                            this.listView1.Items.Add(lvi);
+
+                        }
+                        //this.textBox5.Text = 
+
+                        Console.WriteLine(array[0][0]);
+                        //Console.WriteLine((array[10][0]).GetType());
+                        float sol0, sol1, sol2, sol3, sol4, sol5;
+                        float.TryParse(array[0][0], out sol0);
+                        float.TryParse(array[0][1], out sol1);
+                        float.TryParse(array[0][2], out sol2);
+                        float.TryParse(array[0][3], out sol3);
+                        float.TryParse(array[0][4], out sol4);
+                        float.TryParse(array[0][5], out sol5);
+                        float sum = sol0 + sol1 + sol2 + sol3 + sol4 + sol5;
+
+                        this.allSol.Text = sum.ToString();
+                        Console.WriteLine(sol0 + sol1 + sol2 + sol3 + sol4 + sol5);
+                        Console.WriteLine(sol1.GetType());
                     }
-               }
-                catch
-                {
-                    MessageBox.Show("请等到程序完全启动之后在开始监测");
-                    this.timer1.Stop();
                 }
+            }
+            catch
+            {
+                MessageBox.Show("请等到程序完全启动之后在开始监测");
+                this.timer1.Stop();
+            }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -845,7 +866,8 @@ namespace requestJson
         private void Form1_Load(object sender, EventArgs e)
         {
             //autoreader(@"C:\temp\bminer-v2.0.0-24861a7\saveUserInput.ini");
-            if (this.autoStart.Checked == true) {
+            if (this.autoStart.Checked == true)
+            {
                 this.btnStart.PerformClick();
             }
         }
